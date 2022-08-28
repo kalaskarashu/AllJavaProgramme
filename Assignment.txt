@@ -1,0 +1,192 @@
+ 1)select name from customer left join orders on customer.customer_id=orders.customer_id;
+2)select name from customer full join orders on customer.customer_id=orders.customer_id;
+3)select name from customer left join orders on customer.customer_id=orders.customer_id where qty>3;
+4)select * from orders right join customer on customer.customer_id=orders.customer_id where city='dhad' and (order_date-sysdate)<15;
+5)select * from orders right join customer on customer.customer_id=orders.customer_id where (order_date-sysdate)<180;
+7)select order_date,total_amt from orders left join customer on customer.customer_id=orders.customer_id where total_amt>6000;e
+_____________________movie Actor_____________________________
+1)select m_name,a_name from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id;
+2)select a_name from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id group by movie_actor.a_id,a_name having count(movie_actor.a_id)>=1;
+3)select  m_name,actor.a_id,a_name,role,charges,a_address,language from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id and extract(year from realse_date)=1998;
+4)select count(*),sum(budget) from movies where extract(year from realse_date)=2018;
+5)select a_name from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id group by movie_actor.a_id,a_name having count(movie_actor.a_id)>=4;
+6)select m_name from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id and a_name='Yash' and role='Hero Gangstar';
+7) select count(movies.m_id) from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id and a_name='Prabhas' and role='Hero' and extract(year from realse_date)>2010;
+8)select movies.m_id,m_name,realse_date,budget from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id and a_name='Yash' and a_name='Ajay Devghan' and budget>1000000
+  and extract(year from realse_date)=extract (year from sysdate) and extract(month from realse_date)=extract(month from sysdate)+1;
+9)select count(movies.m_id) from movies,actor,movie_actor where movies.m_id=movie_actor.m_id and actor.a_id=movie_actor.a_id and language='marathi' and extract(year from realse_date)=extract(year from sysdate)-1;
+____________________________Self join_______________________________________
+select e1.ename "Employee",e2.ename " Reporting person" from emp e1,emp e2 where e1.mgr=e2.empno;
+select e1.ename "Employee",e2.ename "Manager" from emp e1, emp e2 where e1.mgr=e2.empno and e1.hiredate>e2.hiredate;
+select e1.ename "Employee",e2.ename "Manager",e1.sal from emp e1, emp e2 where e1.mgr=e2.empno and e1.sal>e2.sal;
+__________________________________SubQuery____________________________________
+1)select deptno,round(avg(sal),1) as Avg from emp group by deptno having max(sal)>(select avg(sal) from emp where deptno=20);
+2)select dname,loc,deptno from dept where deptno in(select deptno from emp group by deptno having count(empno)>3);
+3)select dname,deptno from dept where deptno=(select deptno from emp group by deptno having count(empno) in (select min(count(empno)) from emp group by deptno));
+5)select ename from emp where mgr=(select empno from emp where ename='KING');
+4)select job from emp group by job having min(sal)>=(select avg(sal) from emp where job='SALESMAN');
+6)select dname,deptno from dept where deptno=(select deptno from emp group by deptno having count('CLERK')=(select max(count('CLERK')) from emp group by deptno));
+__________________________________________Co-releated Query____________________________________________
+1)select ename,sal,deptno from emp e1 where sal in(select max(sal) from emp e2 where e1.deptno=e2.deptno);
+2)select ename,hiredate from emp e1 where hiredate<(select hiredate from emp e2 where e1.mgr=e2.empno);
+3)select ename,sal from emp e1 where sal>(select sal from emp e2 where e1.mgr=e2.empno);
+4) select ename,sal from emp e1 where sal<any(select sal from emp e2 where e1.job=e2.job);
+or
+select ename,sal,job from emp where sal in (select min(sal) from emp group by job); 
+1) select deptno from emp group by deptno having count(empno)>2 and sal>(select avg(max(sal)) from emp group by deptno);
+2)select ename,empno,hiredate,sal from emp where extract(year from hiredate)=1981 and sal>(select min(sal) from emp where extract(year from hiredate)=1981);
+4)select job from emp group by job having count(job)=(select max(count(empno)) from emp group by job);
+___________________________________________________________31-05_______________________________________________________________
+3)select * from emp where hiredate between '01-jul-1981' and '31-dec-1981' order by job asc;
+4)select * from emp where job in(select job from emp where hiredate in(select min(hiredate) from emp where hiredate between '01-jan-1981' and '31-dec-1981'));
+5)select deptno,job,count(empno) from emp group by deptno,job;
+6)select * from emp where deptno in(select deptno from emp group by deptno having count(empno)>=2);
+7)select dname,count(*) from emp join dept on(emp.deptno=dept.deptno) where job='CLERK' and 
+  emp.deptno in(select deptno from emp where job='CLERK' group by deptno having count(*)>=2) group by dname;
+8)select ename,empno,sal,dname,sal,comm from emp natural join dept where sal between 2000 and 5000 and loc='CHICAGO'
+9)select * from emp e1,emp e2 where e1.mgr=e2.empno and e1.sal>e2.sal;
+10)select ename,job,dname,loc from emp join dept on(emp.deptno=dept.deptno) where empno in(select mgr from emp);
+11)select ename,sal from emp where sal in(select max(sal) from emp group by deptno);
+12)select * from emp where sal=(select min(avg(sal)) from emp group by deptno);
+13)select dname from dept where deptno=(select deptno from emp group by deptno having count(*)=(select max(count(*)) from emp group by deptno));
+14)select ename from emp where sal in(select min(sal) from emp group by job);
+15) nvl ---select sal,sal+nvl(comm,0) from emp;
+select deptno,ename,job,sal,sal+nvl(comm,0) from emp where job='SALESMAN' and sal in(select max(sal+nvl(comm,0) from emp);
+__________________________________________________________________________________________________________________________
+set serveroutput on
+ 1  declare
+  2  a int;
+  3  b int;
+  4  c int;
+  5  begin
+  6  a:=&a;
+  7  b:=&b;
+  8  c:=a+b;
+  9  dbms_output.put_line('Addition is '||c);
+ 10* end;
+____________________________________________________________
+declare
+n int:=&n;
+m int;
+cnt int:=1;
+begin
+for m in 1..&m loop
+cnt:=cnt*n;
+end loop;
+dbms_output.put_line('power is '||cnt);
+end;
+______________________________________________________________________
+   declare
+    v_eno int:=&eno;
+    v_sal int;
+    v_ename varchar(30);
+    begin
+    select sal into v_sal from emp where empno=v_eno;
+    if v_sal>3000 then
+    update emp set sal=v_sal*1.05 where empno=v_eno;
+   elsif v_sal>2000 then
+   update emp set sal=v_sal*1.03 where empno=v_eno;
+   else
+   update emp set sal=v_sal*1.02 where empno=v_eno;
+   end if;
+   select sal into v_sal from emp where empno=v_eno;
+   dbms_output.put_line('New sal is '||v_sal);
+   end;
+___________________________procedure/Cursor__________________________________________
+1  create or replace procedure p2 as
+  2  enm varchar(20);
+  3  v_job varchar(20);
+  4  v_hiredate date;
+  5  v_sal int;
+  6  v_comm int;
+  7  t_Tsal int;
+  8  cursor e1 is select ename,job,hiredate,sal,comm,sal+nvl(comm,0) from emp;
+  9  begin
+ 10  open e1;
+ 11  loop
+ 12  exit when e1%Notfound;
+ 13  fetch e1 into enm,v_job,v_hiredate,v_sal,v_comm,t_Tsal;
+ 14  dbms_output.put_line('Name: '||enm||' job: '||v_job||' hiredate: '||v_hiredate||' sal: '||v_sal||' comm:'||v_comm||' Total sal:'||t_Tsal);
+ 15  end loop;
+ 16  close e1;
+ 17* end;
+_____________________________________________________________
+declare
+--cursor e1 is select * from emp;
+begin
+for x in (select * from emp)loop
+dbms_output.put_line(x.ename||'    '||x.empno||'    '||x.sal||'    '||x.comm);
+end loop;
+end;
+/
+______________________________________________________________________
+create or replace procedure p3 as
+  cursor c1 is select * from emp;
+  begin
+  for x in c1 loop
+  if x.job='MANAGER' then
+  update emp set sal=sal*1.06 where job='MANAGER';
+  elsif x.job='ANALYST' then
+  update emp set sal=sal*1.04 where job='ANALYST';
+  elsif x.job='CLERK' then
+ update emp set sal=sal*1.03 where job='CLERK';
+ elsif x.job='SALESMAN' then
+ update emp set sal=sal*1.03 where job='SALESMAN';
+ end if;
+ dbms_output.put_line(x.ename||'     '||x.empno||'     '||x.sal||'      '||x.comm);
+ end loop;
+ end;
+________________________________View______________________________
+1)create or replace view v1 as select ename,empno,job,deptno from emp where deptno in(30,10);
+2)create or replace view v2 as select ename,empno,job,hiredate,sal*12 as Annual_salary from emp;
+3)create or replace view v3 as select ename,dname,loc,emp.deptno from emp join dept on emp.deptno=dept.deptno;
+4)create or replace view v4 as select customer.customer_id,name,city,order_id,order_date,total_amt,itemname from customer join orders on customer.customer_id=orders.customer_id;
+___________________________________trigger______________________________________________________
+1)create or replace trigger trigger_test instead of insert on test_emp for each row
+begin
+if :new.sal>1000 then
+insert into dept(dname,deptno)values(:new.dname,:new.deptno);
+insert into emp (empno,ename,sal,deptno) values(:new.empno,:new.ename,:new.sal,:new.deptno);
+else
+  raise_application_error(-20001,'Salary must be greater than 1000');
+end if;
+end;
+____
+2)create or replace trigger t2 instead of insert on v4 for each row
+ begin
+ insert into customer(customer_id,name,city)values(:new.customer_id,:new.name,:new.city);
+ insert into orders(order_id,order_date,total_amt,itemname,customer_id)values(:new.order_id,:new.order_date,:new.total_amt,:new.itemname,:new.customer_id);
+ end;
+________________________________________Package__________________________________
+create or replace package pk as
+procedure p2(eno emp.empno%type);
+function tot_max_sal return number;
+cursor c1 is select * from emp;
+end;
+__________package body
+create or replace package body pk as
+  procedure p2 (eno emp.empno%type) as
+  em emp%rowtype;
+  begin
+  select * into em from emp where empno=eno;
+  dbms_output.put_line('Employee name: '||em.ename);
+  end p2;
+  function tot_max_sal return number as
+  total number;
+ begin
+ select sum(max(sal)) into total from emp group by deptno;
+ return total;
+ end;
+ end;
+________________________________Package______________
+create or replace package p7 as
+procedure p09(dptno emp.deptno%type);
+function tol_max_sal_dpt return number;
+cursor c2 is select * from emp;
+end;
+____________package body
+
+
+
+
+
